@@ -8,37 +8,13 @@ A written instruction expresses your preference. A Git hook checks the actual co
 
 ## Install with an agent
 
-Copy this prompt into your coding agent. It authorizes installation on your machine, including integration with existing global hooks.
+Copy this prompt into your coding agent:
 
 ```text
-Install https://github.com/newbdez33/no-claude-coauthor on this machine to
-prevent unwanted Claude Code attribution in future Git commits.
-
-Read its README and shell scripts first. Use a persistent checkout at
-~/.local/share/no-claude-coauthor. Reuse an existing checkout without
-discarding local changes.
-
-Inspect the global core.hooksPath and the effective setting in the current
-repository. If no global hooks path exists, run install.sh. If one already
-exists, preserve it and follow the README's existing-hook integration:
-run bin/check-message before and after the existing prepare-commit-msg,
-commit-msg, and applypatch-msg logic. Preserve existing hook behavior,
-arguments, standard input, and failure status. Use the hook manager's
-supported configuration, and avoid duplicate checks on repeat runs.
-
-Also merge the README's Claude Code attribution settings into
-~/.claude/settings.json, preserving unrelated settings.
-
-Run the project tests if Python 3 is available. Then verify the installed
-hooks in a temporary repository that inherits the actual global Git config.
-Set a test identity only in that repository. Confirm that clean commits and
-an unrelated human co-author pass, and a message containing
-Co-Authored-By: Claude <noreply@anthropic.com> fails, including when supplied
-with git commit --no-verify. Keep test commits out of my project repositories.
-
-Do not rewrite existing history or push anything. Report the installed path,
-configuration changes, actual test results, and any repository-local hooks
-path that still overrides the global guard. Explain any incomplete step.
+Install https://github.com/newbdez33/no-claude-coauthor globally on this
+machine. Follow its README, preserve existing hooks and unrelated settings,
+and verify the installation in a temporary repository. Do not rewrite Git
+history or push changes. Report verification results and any coverage gaps.
 ```
 
 ## Install

@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+
+hook_name=${0##*/}
+hooks_dir=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
+checker="$hooks_dir/../bin/check-message"
+
+check_message() {
+    case "$hook_name" in
+        prepare-commit-msg|commit-msg|applypatch-msg) "$checker" "$1" ;;
+    esac
+}
+
+check_message "$@"
+
+# core.hooksPath replaces the normal hook directory. Keep its hooks active.
+if ! common_dir=$(git rev-parse --git-common-dir 2>/dev/null); then
+    # git init can run this hook before HEAD makes the repository discoverable.
+    if [ "$hook_name" = reference-transaction ] && [ -n "${GIT_DIR:-}" ]; then
+        common_dir=${GIT_COMMON_DIR:-$GIT_DIR}
+    else
+        echo "no-claude-coauthor: could not find the repository hook directory." >&2
+        exit 1
+    fi
+fi
+local_hook="$common_dir/hooks/$hook_name"
+if [ -x "$local_hook" ] && [ ! "$local_hook" -ef "$0" ]; then
+    "$local_hook" "$@"
+fi
+
+# A repository hook can change the message, so check its output too.
+check_message "$@"

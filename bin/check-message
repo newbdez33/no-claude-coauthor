@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 1 ] || [ ! -f "$1" ] || [ ! -r "$1" ]; then
+    echo "no-claude-coauthor: expected a readable commit message file." >&2
+    exit 2
+fi
+
+# Match attribution lines, not ordinary prose about Claude Code.
+pattern='^[[:space:]]*Co-Authored-By[[:space:]]*:.*(claude|anthropic)|^[[:space:]]*(🤖[[:space:]]*)?Generated with[[:space:]]+\[?Claude Code|^[[:space:]]*Claude-Session[[:space:]]*:'
+status=0
+LC_ALL=C grep -iE "$pattern" "$1" >/dev/null || status=$?
+case "$status" in
+    0)
+        echo "no-claude-coauthor: commit rejected: Claude attribution is not allowed." >&2
+        echo "Remove the Co-Authored-By, Generated with Claude Code, or Claude-Session line and retry." >&2
+        exit 1
+        ;;
+    1) exit 0 ;;
+    *)
+        echo "no-claude-coauthor: could not check the commit message." >&2
+        exit "$status"
+        ;;
+esac
